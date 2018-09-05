@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.github.saber.modules.sys.repository.SysRoleMapper">
+
+    <!--需生成和实体和表的映射-->
+
+
+    <select id="getUserRole" resultType="io.github.saber.modules.sys.domain.SysRole">
+        select rol.* from sys_role rol
+        join sys_user_role ur on rol.id = ur.role_id
+        where ur.user_id = #{userId}
+    </select>
+</mapper>

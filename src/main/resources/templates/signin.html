@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <title>登录页面 </title>
+        <script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="/js/facelogin.js"></script>
+    </head>
+    <body>
+        <div th:if="${param.error}">
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}">
+            You have been logged out.
+        </div>
+        <h3>表单登录</h3>
+        <form th:action="@{/authentication}" method="post">
+            用户名<input type="text" name="username"><br/>
+            密码<input type="password" name="password"><br/>
+            <button type="submit">登录</button>
+        </form>
+
+        <h3>人脸登录</h3>
+        <form id="face_login_form" action="/authentication/face" method="post">
+            识别凭证<input type="text" name="faceCredentials" value="ggg"><br/>
+            <button type="submit">登录</button> <button type="button" onclick="face_login()">人脸识别自动登录</button>
+        </form>
+
+
+    <script>
+        faceLogin = new FaceLogin({
+                certificationCall: function (faceCertification) {
+                    console.info(faceCertification);
+                    //提交人脸登录表单
+                    $("#face_login_form input[name='faceCredentials']").val(faceCertification);
+                    //提交表单
+
+                    $("#face_login_form").submit();
+                }
+            }
+        );
+
+        function face_login() {
+            faceLogin.open();
+        }
+    </script>
+    </body>
+</html>
