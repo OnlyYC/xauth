@@ -1,7 +1,7 @@
 {
-  "name": "renren-fast-vue",
+  "name": "xauth",
   "version": "1.2.1",
-  "description": "Saber",
+  "description": "xauth",
   "author": "liaoyanbo <876714394@qq.com>",
   "private": true,
   "scripts": {

@@ -3,7 +3,7 @@
   <el-row class="full">
     <el-col :span="18" class="full">
       <div class="brand-info" v-show='faceStatus!=1'>
-        <h2 class="brand-info__text">saber</h2>
+        <h2 class="brand-info__text">XAuth</h2>
       </div>
       <div id="cloudwalk-obj" v-show='faceStatus==1'>
 
