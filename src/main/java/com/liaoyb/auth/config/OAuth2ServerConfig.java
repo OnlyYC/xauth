@@ -41,9 +41,8 @@ public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 .withClient("demoApp")
-                .secret(passwordEncoder.encode("demoAppSecret"))
-                //                .autoApprove(true)
-                .redirectUris("http://localhost:8081/auth/face/redirect")
+                .secret(passwordEncoder.encode("demoAppSecret")).autoApprove(true)
+                .redirectUris("http://baidu.com")
                 .authorizedGrantTypes("authorization_code", "client_credentials", "refresh_token",
                         "password", "implicit")
                 .scopes("all")

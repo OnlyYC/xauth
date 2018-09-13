@@ -11,7 +11,7 @@ public final class AuthoritiesConstants {
 
     public static final String ANONYMOUS = "ROLE_ANONYMOUS";
 
-    public static String DEFAULT_OAUTH_CLIENT = "facelogin";
+    public static String DEFAULT_OAUTH_CLIENT = "xauth";
 
     public static String DEFAULT_USER_PASSWORD="123456";
 

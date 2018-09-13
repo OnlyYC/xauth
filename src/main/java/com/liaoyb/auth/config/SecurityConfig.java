@@ -1,6 +1,5 @@
 package com.liaoyb.auth.config;
 
-import com.liaoyb.auth.config.face.FaceAuthenticationSecurityConfig;
 import com.liaoyb.auth.security.AjaxLogoutSuccessHandler;
 import com.liaoyb.auth.security.UsernamePasswordJsonAnthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -31,8 +29,6 @@ import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 @Import(SecurityProblemSupport.class)
 @Order(2)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private FaceAuthenticationSecurityConfig faceAuthenticationSecurityConfig;
 
     private final SecurityProblemSupport problemSupport;
     private final CorsFilter corsFilter;
@@ -61,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .requestMatchers().antMatchers("/authentication", "/authentication/face", "/authentication/json", "/oauth/**", "/", "/home", "/logout")
+                .requestMatchers().antMatchers("/authentication", "/authentication/json", "/oauth/**", "/signin", "/", "/home", "/logout")
                 .and()
                 .csrf().disable()
                 .addFilterAfter(corsFilter, SecurityContextPersistenceFilter.class)
@@ -71,10 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(problemSupport)
                 .and()
                 .formLogin()
-//                .loginPage("/signin")
+                .loginPage("/signin")
                 .loginProcessingUrl("/authentication")
-                .successHandler(authenticationSuccessHandler)
-                .failureHandler(authenticationFailureHandler)
                 .permitAll()
                 .and()
                 .logout()
@@ -82,20 +76,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(ajaxLogoutSuccessHandler())
                 .permitAll()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
                 .authorizeRequests()
                 .antMatchers("/authentication").authenticated()
-                .antMatchers("/authentication/face").authenticated()
                 .antMatchers("/authentication/json").authenticated()
                 .antMatchers("/oauth/**").authenticated()
                 .antMatchers("/", "/home").authenticated()
-//                .antMatchers("/oauth_signin").authenticated()
-                .antMatchers("/logout").permitAll()
-                .and()
-                .apply(faceAuthenticationSecurityConfig);
-
+                .antMatchers("/logout").permitAll();
     }
 
     @Override

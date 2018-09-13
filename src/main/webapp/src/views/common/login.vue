@@ -2,52 +2,15 @@
 <div class="site-wrapper site-page--login">
   <el-row class="full">
     <el-col :span="18" class="full">
-      <div class="brand-info" v-show='faceStatus!=1'>
+      <div class="brand-info">
         <h2 class="brand-info__text">XAuth</h2>
-      </div>
-      <div id="cloudwalk-obj" v-show='faceStatus==1'>
-
       </div>
     </el-col>
 
     <el-col :span="6" class="full">
       <div class="login-main full">
-        <el-tabs v-model="activeName" :before-leave="handleSwitchTab">
-          <el-tab-pane label="刷脸登录" name="first">
-            <template v-if='faceStatus==0'>
-              <el-form :model="faceForm" :rules="faceRule" ref="faceForm" @keyup.enter.native="faceFormNext()" status-icon>
-                <el-form-item prop="principal">
-                  <el-input v-model="faceForm.principal" placeholder="邮箱或用户名"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button class="login-btn-submit" type="primary" @click="faceFormNext()">刷脸</el-button>
-                </el-form-item>
-              </el-form>
-            </template>
-            <template v-if='faceStatus==1'>
-              <div>刷脸中...</div>
-              <div>{{faceDetectFailMessage}}</div>
-            </template>
-            <template v-if='faceStatus==2'>
-              <div>识别中...</div>
-              <img class="face-small-preview" v-bind:src="bestImageData"/>
-            </template>
-            <template v-if='faceStatus==20'>
-              <div>{{identifyUsername}}</div>
-              <el-form :model="faceLoginForm" :rules="faceLoginRule" ref="faceLoginForm" status-icon>
-                <el-form-item>
-                  <el-button class="login-btn-submit" type="primary" @click="faceFormSubmit()">登录</el-button>
-                </el-form-item>
-              </el-form>
-            </template>
-            <template v-if='faceStatus==21'>
-              <div>{{identifyResultMessage}}</div>
-              <div>
-                <el-button class="login-btn-submit" type="primary" @click="resetLogin()">返回</el-button>
-              </div>
-            </template>
-          </el-tab-pane>
-          <el-tab-pane label="账号密码" name="second">
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="账号密码" name="first">
             <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" status-icon>
               <el-form-item prop="userName">
                 <el-input v-model="dataForm.userName" placeholder="帐号"></el-input>
@@ -70,7 +33,6 @@
 
 <script>
   import { getUUID } from '@/utils'
-  import {FaceLogin} from '@/utils/faceDetect'
   export default {
     data () {
       return {
@@ -91,50 +53,12 @@
           captcha: [
             { required: true, message: '验证码不能为空', trigger: 'blur' }
           ]
-        },
-        faceForm: {
-          principal: '',
-        },
-        faceStatus: 0, //刷脸状态 0   1 刷脸中   2刷脸结束
-        faceRule: {
-          principal: [
-            { required: true, message: '邮箱、用户名不能为空', trigger: 'blur' }
-          ],
-        },
-        faceLoginForm: {
-          faceCredentials: ''
-        },
-        faceLoginRule: {
-          faceCredentials: [
-            { required: true, message: '人脸凭证不能为空', trigger: 'blur' }
-          ],
-        },
-        identifyUsername: '',
-        captchaPath: '',
-        cloudwalkObjWidth: 0,
-        cloudwalkObjHeight: 0,
-        faceDetect: null,
-        faceDetectFailMessage: '',
-        bestImageData: ''
+        }
       }
     },
     created () {
-      this.faceDetect = new FaceLogin({
-        failCallback: this.faceDetectFailCallback,
-        successCallback: this.faceDetectSuccessCallback
-      })
     },
     mounted () {
-      window.onresize = () => {
-          var el = document.getElementById("cloudwalk-obj")
-          var width = el.clientWidth||el.offsetWidth;
-          var height = el.clientHeight||el.offsetHeight;
-          if(this.cloudwalkObjWidth != width && width > 0 || this.cloudwalkObjHeight != height && height > 0){
-              this.cloudwalkObjWidth = width;
-              this.cloudwalkObjHeight = height;
-              this.faceDetect.resize(width, height)
-          }
-        }
     },
     methods: {
       // 提交表单
@@ -161,82 +85,10 @@
           }
         })
       },
-      // 提交表单
-      faceFormNext () {
-        this.$refs['faceForm'].validate((valid) => {
-          if (valid) {
-            //左侧打开刷脸页面
-            this.faceStatus = 1
-            //如果获取到最佳人脸，然后调用人脸识别，获取到人脸凭证
-            this.$nextTick(() => {
-                 this.faceDetect.open()
-            })
-
-
-
-          }
-        })
-      },
-      faceFormSubmit () {
-       this.$http({
-              url: this.$http.adornUrl('/authentication/face'),
-              method: 'post',
-              data: this.$http.adornData({
-                'faceCredentials': this.faceLoginForm.faceCredentials,
-              })
-            }).then(({data}) => {
-                console.info()
-                this.$cookie.set('token', data.access_token)
-                this.$router.replace({ name: 'home' })
-            }).catch((error) => {
-               // this.getCaptcha()
-              this.$message.error(error.msg)
-            });
-      },
       // 获取验证码
       getCaptcha () {
         this.dataForm.uuid = getUUID()
         this.captchaPath = this.$http.adornUrl(`/captcha.jpg?uuid=${this.dataForm.uuid}`)
-      },
-      handleSwitchTab(activeName, oldActiveName) {
-        if(oldActiveName == 'first' && this.faceStatus !=0){
-          return false;
-        }
-        return true;
-      },
-      faceDetectFailCallback (message){
-          this.faceDetectFailMessage = message
-      },
-      faceDetectSuccessCallback (imageData){
-        //获取到最佳人脸
-        this.faceStatus = 2
-        this.bestImageData = "data:image/jpeg;base64," + imageData
-
-
-        //识别,返回识别凭证
-        this.$http({
-              url: this.$http.adornUrl('/face/identify'),
-              method: 'post',
-              data: this.$http.adornData({
-                'imageData': imageData,
-                'principal': this.faceForm.principal
-              })
-            }).then(({data}) => {
-                //识别成功
-                 this.faceLoginForm.faceCredentials = data.faceCredentials
-                 this.identifyUsername = data.name
-                 this.faceStatus = 20
-            }).catch((error) => {
-              this.$message.error(error.msg)
-              this.faceStatus = 21
-              this.identifyResultMessage = error.msg
-            });
-
-      },
-      //重置登录表单
-      resetLogin (){
-          this.faceStatus = 0
-          this.faceForm.principal = ''
       }
     }
   }
@@ -306,9 +158,6 @@
     .login-btn-submit {
       width: 100%;
       margin-top: 38px;
-    }
-    .face-small-preview {
-      height: 200px
     }
   }
 </style>

@@ -1,4 +1,4 @@
-package com.liaoyb.auth.config.face;
+package com.liaoyb.auth.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liaoyb.auth.security.AuthoritiesConstants;
@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 @Component
 @Slf4j
-public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class XAuthAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     @Autowired
     private ObjectMapper objectMapper;
 

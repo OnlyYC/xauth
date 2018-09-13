@@ -1,4 +1,4 @@
-package com.liaoyb.auth.config.face;
+package com.liaoyb.auth.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Component
-public class MyAuthenticationFailHandler implements AuthenticationFailureHandler {
+public class XAuthAuthenticationFailHandler implements AuthenticationFailureHandler {
     @Autowired
     private ObjectMapper objectMapper;
 
