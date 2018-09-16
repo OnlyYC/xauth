@@ -42,7 +42,7 @@ public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
         clients.inMemory()
                 .withClient("demoApp")
                 .secret(passwordEncoder.encode("demoAppSecret")).autoApprove(true)
-                .redirectUris("http://baidu.com")
+                .redirectUris("http://localhost:8000/auth/xauth", "http://localhost:8000/connect/xauth")
                 .authorizedGrantTypes("authorization_code", "client_credentials", "refresh_token",
                         "password", "implicit")
                 .scopes("all")

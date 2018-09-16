@@ -8,7 +8,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
-import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,10 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     private final CorsFilter corsFilter;
-    private final SecurityProblemSupport problemSupport;
 
-    public ResourceServerConfig(SecurityProblemSupport problemSupport, CorsFilter corsFilter) {
-        this.problemSupport = problemSupport;
+    public ResourceServerConfig(CorsFilter corsFilter) {
         this.corsFilter = corsFilter;
     }
 
